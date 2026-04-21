@@ -31,8 +31,7 @@ RUN if [ -e "/activation-key/org" ]; then dnf install -y subscription-manager &&
 ENV GO=${GO}
 RUN make build-hiveadmission build-manager build-operator && \
   make build-hiveutil
-ENV GOTOOLCHAIN=auto
-RUN make -C test/ote build
+RUN go env -w GOTOOLCHAIN=auto && make -C test/ote build
 
 FROM ${BASE_IMAGE}
 ARG CONTAINER_SUB_MANAGER_OFF
