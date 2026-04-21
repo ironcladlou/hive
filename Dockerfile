@@ -1,6 +1,7 @@
 ARG CONTAINER_SUB_MANAGER_OFF=0
 ARG EL8_BUILD_IMAGE=${EL8_BUILD_IMAGE:-registry.ci.openshift.org/ocp/builder:rhel-8-golang-1.24-openshift-4.20}
 ARG EL9_BUILD_IMAGE=${EL9_BUILD_IMAGE:-registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.24-openshift-4.20}
+ARG OTE_BUILD_IMAGE=${OTE_BUILD_IMAGE:-registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.25-openshift-4.22}
 ARG BASE_IMAGE=${BASE_IMAGE:-registry.access.redhat.com/ubi9/ubi-minimal:latest}
 
 FROM ${EL8_BUILD_IMAGE} as builder_rhel8
@@ -31,7 +32,12 @@ RUN if [ -e "/activation-key/org" ]; then dnf install -y subscription-manager &&
 ENV GO=${GO}
 RUN make build-hiveadmission build-manager build-operator && \
   make build-hiveutil
-RUN go env -w GOTOOLCHAIN=auto && make -C test/ote build
+
+FROM ${OTE_BUILD_IMAGE} as builder_ote
+RUN mkdir -p /go/src/github.com/openshift/hive
+WORKDIR /go/src/github.com/openshift/hive
+COPY . .
+RUN make -C test/ote build
 
 FROM ${BASE_IMAGE}
 ARG CONTAINER_SUB_MANAGER_OFF
@@ -57,7 +63,7 @@ COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/operator /opt/se
 
 COPY --from=builder_rhel8 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil.rhel8
 COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil
-COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/test/ote/bin/hive /usr/bin/openshift-tests-extension
+COPY --from=builder_ote /go/src/github.com/openshift/hive/test/ote/bin/hive /usr/bin/openshift-tests-extension
 RUN gzip -f -k /usr/bin/openshift-tests-extension
 
 # Hacks to allow writing known_hosts, homedir is / by default in OpenShift.

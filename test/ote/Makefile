@@ -7,7 +7,7 @@ all: build
 
 .PHONY: build
 build:
-	GOTOOLCHAIN=auto go build -mod=mod -o $(EXTENSION_BIN) ./$(CMD_DIR)/...
+	go build -mod=mod -o $(EXTENSION_BIN) ./$(CMD_DIR)/...
 
 .PHONY: test
 test:
