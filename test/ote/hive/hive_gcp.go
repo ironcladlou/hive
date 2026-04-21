@@ -136,6 +136,7 @@ var _ = g.Describe("[OTP][sig-hive] Cluster_Operator hive should", func() {
 		// variable to a Google cloud credential file.
 		instancesClient, err := compute.NewInstancesRESTClient(context.Background())
 		o.Expect(err).NotTo(o.HaveOccurred())
+		defer instancesClient.Close()
 		filter := fmt.Sprintf("(name=%s*) AND (shieldedInstanceConfig.enableSecureBoot = true)", cdName)
 		o.Expect(countVMs(instancesClient, projectID, filter)).To(o.Equal(6))
 
@@ -672,10 +673,10 @@ apiVersion: hive.openshift.io/v1
 kind: SyncSet
 metadata:
   name: ` + syncSetName4 + `
+  namespace: ` + oc.Namespace() + `
 spec:
   clusterDeploymentRefs:
   - name: ` + cdName + `
-  - namespace: ` + oc.Namespace() + `
   resourceApplyMode: Sync
   resources:
   - apiVersion: authorization.openshift.io/v1

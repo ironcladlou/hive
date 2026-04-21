@@ -1,6 +1,8 @@
 module github.com/openshift/hive/test/ote
 
-go 1.25.0
+go 1.24
+
+toolchain go1.25.0
 
 require (
 	cloud.google.com/go/compute v1.38.0

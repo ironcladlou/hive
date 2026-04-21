@@ -424,7 +424,7 @@ var _ = g.Describe("[OTP][sig-hive] Cluster_Operator hive should", func() {
 		compat_otp.By("Check if CD is Hibernating")
 		newCheck("expect", "get", asAdmin, withoutNamespace, contain, "Hibernating", ok, 2*ClusterResumeTimeout, []string{"ClusterDeployment", oldCdName, "-n", oldCdName}).check(oc)
 
-		hibernateTimestamp, err := time.Parse(time.RFC3339, getResource(oc, asAdmin, withoutNamespace, "ClusterDeployment", oldCdName, "-n", oldCdName, `-o=jsonpath={.status.conditions[?(@.type=="Hibernating")].lastProbeTime}`))
+		hibernateTimestamp, err := time.Parse(time.RFC3339, getResource(oc, asAdmin, withoutNamespace, "ClusterDeployment", oldCdName, "-n", oldCdName, `-o=jsonpath={.status.conditions[?(@.type=="Hibernating")].lastTransitionTime}`))
 		o.Expect(err).NotTo(o.HaveOccurred())
 		e2e.Logf("get hibernattimestaps, hibernateTimestamp is %s", hibernateTimestamp)
 

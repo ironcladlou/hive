@@ -70,7 +70,10 @@ var _ = g.Describe("[OTP][sig-hive] Cluster_Operator hive should", func() {
 			Infrastructures().
 			Get(context.Background(), "cluster", metav1.GetOptions{})
 		o.Expect(err).NotTo(o.HaveOccurred())
+		o.Expect(infrastructure.Spec.PlatformSpec.VSphere).NotTo(o.BeNil(), "vSphere platform spec must not be nil")
 		failureDomains := infrastructure.Spec.PlatformSpec.VSphere.FailureDomains
+		o.Expect(failureDomains).NotTo(o.BeEmpty(), "vSphere FailureDomains must not be empty")
+		o.Expect(failureDomains[0].Topology.Networks).NotTo(o.BeEmpty(), "vSphere FailureDomain networks must not be empty")
 		datacenter = failureDomains[0].Topology.Datacenter
 		datastore = failureDomains[0].Topology.Datastore
 		network = failureDomains[0].Topology.Networks[0]

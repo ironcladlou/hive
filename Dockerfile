@@ -31,7 +31,7 @@ RUN if [ -e "/activation-key/org" ]; then dnf install -y subscription-manager &&
 ENV GO=${GO}
 RUN make build-hiveadmission build-manager build-operator && \
   make build-hiveutil
-RUN cd test/ote && go build -o /go/src/github.com/openshift/hive/bin/openshift-tests-extension ./cmd/extension/
+RUN make -C test/ote build
 
 FROM ${BASE_IMAGE}
 ARG CONTAINER_SUB_MANAGER_OFF
@@ -57,7 +57,8 @@ COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/operator /opt/se
 
 COPY --from=builder_rhel8 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil.rhel8
 COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil
-COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/openshift-tests-extension /usr/bin/openshift-tests-extension
+COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/test/ote/bin/hive /usr/bin/openshift-tests-extension
+RUN gzip -f -k /usr/bin/openshift-tests-extension
 
 # Hacks to allow writing known_hosts, homedir is / by default in OpenShift.
 # Bare metal installs need to write to $HOME/.cache, and $HOME/.ssh for as long as

@@ -226,7 +226,7 @@ var _ = g.Describe("[OTP][sig-hive] Cluster_Operator hive should", func() {
 	g.It("[Level0] NonHyperShiftHOST-NonPreRelease-Longduration-ConnectedOnly-Author:lwan-Critical-29670-install/uninstall hive operator from OperatorHub", func() {
 		compat_otp.By("Check Subscription...")
 		newCheck("expect", "get", asAdmin, withoutNamespace, contain, "AllCatalogSourcesHealthy", ok, DefaultTimeout, []string{"sub", sub.name, "-n",
-			sub.namespace, "-o=jsonpath={.status.conditions[0].reason}"}).check(oc)
+			sub.namespace, `-o=jsonpath={.status.conditions[?(@.type=="CatalogSourcesUnhealthy")].reason}`}).check(oc)
 
 		compat_otp.By("Check Hive Operator pods are created !!!")
 		newCheck("expect", "get", asAdmin, withoutNamespace, contain, "hive-operator", ok, DefaultTimeout, []string{"pod", "--selector=control-plane=hive-operator",
