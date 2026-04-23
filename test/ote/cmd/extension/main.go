@@ -26,7 +26,7 @@ var platformFileSelectors = map[string]string{
 func main() {
 	registry := e.NewRegistry()
 
-	ext := e.NewExtension("openshift", "payload", "hive")
+	ext := e.NewExtension("openshift", "optional", "hive")
 
 	ext.AddSuite(e.Suite{
 		Name:    "openshift/hive",
