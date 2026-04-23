@@ -1,0 +1,20 @@
+ARG OTE_BUILD_IMAGE=${OTE_BUILD_IMAGE:-registry.ci.openshift.org/ocp/builder:rhel-9-golang-1.25-openshift-4.22}
+ARG BASE_IMAGE=${BASE_IMAGE:-registry.access.redhat.com/ubi9/ubi-minimal:latest}
+
+FROM ${OTE_BUILD_IMAGE} as builder
+RUN mkdir -p /go/src/github.com/openshift/hive
+WORKDIR /go/src/github.com/openshift/hive
+COPY . .
+RUN make -C test/ote build
+
+FROM ${BASE_IMAGE}
+COPY --from=builder /go/src/github.com/openshift/hive/test/ote/bin/hive /usr/bin/openshift-tests-extension
+RUN gzip -f -k /usr/bin/openshift-tests-extension
+
+ENTRYPOINT ["/usr/bin/openshift-tests-extension"]
+
+LABEL name="hive-tests"
+LABEL summary="OpenShift Hive OTE extension binary"
+LABEL description="Contains the OpenShift Tests Extension binary for Hive e2e tests"
+LABEL io.k8s.display-name="hive-tests"
+LABEL io.openshift.tags="hive,tests,ote"

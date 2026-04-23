@@ -7,7 +7,7 @@ all: build
 
 .PHONY: build
 build:
-	go build -mod=mod -o $(EXTENSION_BIN) ./$(CMD_DIR)/...
+	CGO_ENABLED=0 go build -mod=mod -o $(EXTENSION_BIN) ./$(CMD_DIR)/...
 
 .PHONY: test
 test:

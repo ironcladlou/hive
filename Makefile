@@ -90,6 +90,9 @@ $(call add-bindata,operator,$(BINDATA_INPUTS),,assets,pkg/operator/assets/bindat
 IMAGE_BUILD_EXTRA_FLAGS := --build-arg BASE_IMAGE=$(BASE_IMAGE) --build-arg EL8_BUILD_IMAGE=$(EL8_BUILD_IMAGE) --build-arg EL9_BUILD_IMAGE=$(EL9_BUILD_IMAGE)
 $(call build-image,hive,$(IMG),./Dockerfile,.)
 
+OTE_IMG ?= hive-tests:latest
+$(call build-image,hive-ote,$(OTE_IMG),./Dockerfile.ote,.)
+
 clean:
 	rm -rf $(GO_BUILD_BINDIR)
 
