@@ -56,7 +56,6 @@ COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/operator /opt/se
 
 COPY --from=builder_rhel8 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil.rhel8
 COPY --from=builder_rhel9 /go/src/github.com/openshift/hive/bin/hiveutil /usr/bin/hiveutil
-
 # Hacks to allow writing known_hosts, homedir is / by default in OpenShift.
 # Bare metal installs need to write to $HOME/.cache, and $HOME/.ssh for as long as
 # we're hitting libvirt over ssh. OpenShift will not let you write these directories
